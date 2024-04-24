@@ -372,6 +372,19 @@ function allow_local_whitelist_traffic() {
 	fi
 }
 
+function allow_local_whitelist_traffic_reverse() {
+	local IP
+	local RESULT
+	for IP in $WHITELIST_IPS; do
+		if ! RESULT=$(iptables_tj --table filter --insert TRAFFICJAM --destination "$IP" --source "$SUBNET" --jump RETURN --match comment --comment "trafficjam_$INSTANCE_ID $DATE" 2>&1); then
+			log_error "Unexpected error while setting whitelist allow rule: $RESULT"
+			return 1
+		else
+			log "Added rule: --table filter --insert TRAFFICJAM --destination $IP --source $SUBNET --jump RETURN"
+		fi
+	done
+}
+
 function remove_old_rules() {
 	local RULENUMS
 	local RESULT
