@@ -20,6 +20,7 @@ fi
 : "${POLL_INTERVAL:=5}"
 : "${ALLOW_HOST_TRAFFIC:=}"
 : "${ALLOW_TWO_WAY_TRAFFIC:=}"
+: "${ALLOW_IP_TRAFFIC:=}"
 : "${DEBUG:=}"
 : "${TZ:=}"
 NETNS=""
@@ -102,6 +103,10 @@ else
 			if [[ -z "$ALLOW_HOST_TRAFFIC" ]]; then
 				add_input_chain || continue
 				block_host_traffic  || continue
+			fi
+
+			if [[ -n "$ALLOW_IP_TRAFFIC" ]]; then
+				allow_ip_traffic || continue
 			fi
 
 			if [[ "$NETWORK_DRIVER" == "overlay" ]]; then
