@@ -20,6 +20,7 @@ fi
 : "${POLL_INTERVAL:=5}"
 : "${ALLOW_HOST_TRAFFIC:=}"
 : "${ALLOW_TWO_WAY_TRAFFIC:=}"
+: "${REVERSE_TRAFFIC:=}"
 : "${ALLOW_IP_TRAFFIC:=}"
 : "${DEBUG:=}"
 : "${TZ:=}"
@@ -120,11 +121,18 @@ else
 				allow_swarm_whitelist_traffic || continue
 			fi
 
-			allow_local_whitelist_traffic || continue
    
-			if [[ "$ALLOW_TWO_WAY_TRAFFIC" == "true" ]]; then
+			if [[ "$REVERSE_TRAFFIC" == "true" ]]; then
 				allow_local_whitelist_traffic_reverse || continue
-     			fi
+				if [[ "$ALLOW_TWO_WAY_TRAFFIC" == "true" ]]; then
+					allow_local_whitelist_traffic || continue
+	     			fi
+	 		else
+				allow_local_whitelist_traffic || continue
+				if [[ "$ALLOW_TWO_WAY_TRAFFIC" == "true" ]]; then
+					allow_local_whitelist_traffic_reverse || continue
+	     			fi
+			fi
 
 			remove_old_rules TRAFFICJAM || continue
 
