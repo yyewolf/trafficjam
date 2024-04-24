@@ -327,6 +327,15 @@ function allow_local_load_balancer_traffic() {
 	fi
 }
 
+function allow_local_load_balancer_traffic_reverse() {
+	if ! RESULT=$(iptables_tj --table filter --insert TRAFFICJAM --destination "$LOCAL_LOAD_BALANCER_IP" --source "$SUBNET" --jump RETURN --match comment --comment "trafficjam_$INSTANCE_ID $DATE" 2>&1); then
+		log_error "Unexpected error while setting load balancer allow rule: $RESULT"
+		return 1
+	else
+		log "Added rule: --table filter --insert TRAFFICJAM --destination $LOCAL_LOAD_BALANCER_IP --source $SUBNET --jump RETURN"
+	fi
+}
+
 function allow_swarm_whitelist_traffic() {
 	if [[ -n "$ALLOWED_SWARM_IPS" ]]; then
 		for IP in $ALLOWED_SWARM_IPS; do
