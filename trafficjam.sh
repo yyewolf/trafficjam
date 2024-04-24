@@ -19,6 +19,7 @@ fi
 : "${SWARM_IMAGE:=kaysond/trafficjam}"
 : "${POLL_INTERVAL:=5}"
 : "${ALLOW_HOST_TRAFFIC:=}"
+: "${ALLOW_TWO_WAY_TRAFFIC:=}"
 : "${DEBUG:=}"
 : "${TZ:=}"
 NETNS=""
@@ -106,6 +107,11 @@ else
 			if [[ "$NETWORK_DRIVER" == "overlay" ]]; then
 				report_local_whitelist_ips || continue		
 				allow_local_load_balancer_traffic || continue
+
+		   		if [[ "$ALLOW_TWO_WAY_TRAFFIC" == "true" ]]; then
+					allow_local_load_balancer_traffic_reverse || continue
+		      		fi
+
 				allow_swarm_whitelist_traffic || continue
 			fi
 
