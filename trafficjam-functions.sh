@@ -395,6 +395,12 @@ function allow_local_whitelist_traffic_reverse() {
 			log "Added rule: --table filter --insert TRAFFICJAM --destination $IP --source $SUBNET --jump RETURN"
 		fi
 	done
+	if ! RESULT=$(iptables_tj --table filter --insert TRAFFICJAM --source "$SUBNET" --destination "$SUBNET" --match conntrack --ctstate RELATED,ESTABLISHED --jump RETURN --match comment --comment "trafficjam_$INSTANCE_ID $DATE" 2>&1); then
+		log_error "Unexpected error while setting whitelist allow rule: $RESULT"
+		return 1
+	else
+		log "Added rule: --table filter --insert TRAFFICJAM --source $SUBNET --destination $SUBNET --match conntrack --ctstate RELATED,ESTABLISHED --jump RETURN"
+	fi
 }
 
 function remove_old_rules() {
