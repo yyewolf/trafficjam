@@ -315,8 +315,7 @@ function block_host_traffic() {
 }
 
 function allow_ip_traffic() {
-	IPS=($ALLOW_IP_TRAFFIC)
-	for IP in $IPS; do
+	for IP in $ALLOW_IP_TRAFFIC; do
 		# Allow local bound to this specific ip
 		if ! RESULT=$(iptables_tj --table filter --insert TRAFFICJAM_INPUT --source "$SUBNET" --destination "$IP" --jump RETURN --match comment --comment "trafficjam_$INSTANCE_ID $DATE" 2>&1); then
 			log_error "Unexpected error while setting ip allow rules: $RESULT"
