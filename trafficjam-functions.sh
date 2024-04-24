@@ -314,6 +314,19 @@ function block_host_traffic() {
 	fi
 }
 
+function allow_ip_traffic() {
+	IPS=($ALLOW_IP_TRAFFIC)
+	for IP in $IPS; do
+		# Allow local bound to this specific ip
+		if ! RESULT=$(iptables_tj --table filter --insert TRAFFICJAM_INPUT --source "$SUBNET" --destination "$IP" --jump RETURN --match comment --comment "trafficjam_$INSTANCE_ID $DATE" 2>&1); then
+			log_error "Unexpected error while setting ip allow rules: $RESULT"
+			return 1
+		else
+			log "Added rule: --table filter --insert TRAFFICJAM_INPUT --source $SUBNET --destination $IP --jump RETURN"
+		fi
+  	done
+}
+
 function report_local_whitelist_ips() {
 	log "#WHITELIST_IPS#$WHITELIST_IPS $LOCAL_LOAD_BALANCER_IP"
 }
