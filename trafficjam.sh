@@ -108,14 +108,18 @@ else
 				report_local_whitelist_ips || continue		
 				allow_local_load_balancer_traffic || continue
 
-		   		if [[ "$ALLOW_TWO_WAY_TRAFFIC" == "true" ]]; then
+				if [[ "$ALLOW_TWO_WAY_TRAFFIC" == "true" ]]; then
 					allow_local_load_balancer_traffic_reverse || continue
-		      		fi
+     				fi
 
 				allow_swarm_whitelist_traffic || continue
 			fi
 
 			allow_local_whitelist_traffic || continue
+   
+			if [[ "$ALLOW_TWO_WAY_TRAFFIC" == "true" ]]; then
+				allow_local_whitelist_traffic_reverse || continue
+     			fi
 
 			remove_old_rules TRAFFICJAM || continue
 
